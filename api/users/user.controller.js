@@ -21,6 +21,17 @@ module.exports = {
     const body = req.body;
     const salt = genSaltSync(10);
     body.password = hashSync(body.password, salt);
+    getUserByUserEmail(body.email, (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      if (results) {
+        return res.json({
+          success: 0,
+          data: "Email id already exist. Please try any other email id."
+        });
+      }
+    });
     createStudent(body, (err, results) => {
       if (err) {
         console.log(err);
@@ -202,7 +213,7 @@ module.exports = {
       
         // send mail with defined transport object
         transport.sendMail({
-          from: 'amit.testg@gmail', // sender address
+          from: process.env.SMTP_USER, // sender address
           to: result.email, // list of receivers
           subject:  "You have assigned a student", 
           html: "<h2>Hi "+ result.user_type+",</h2><br><p>You have assigned a student  by admin.</p><p>Thanks,<BR>Hestabit </p>", // plain text body
@@ -245,7 +256,7 @@ module.exports = {
         result.password = undefined;
       // send mail with defined transport object
       transport.sendMail({
-        from: 'amit.testg@gmail', // sender address
+        from: process.env.SMTP_USER, // sender address
         to: result.email, // list of receivers
         subject:  "Your account have been approved", 
         html: "<h2>Hi "+ result.user_type+",</h2><br><p>You has been approved by admin.</p><p>Thanks,<BR>Hestabit </p>", // plain text body

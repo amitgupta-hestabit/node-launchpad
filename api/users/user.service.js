@@ -181,5 +181,17 @@ module.exports = {
         return callBack(null, results[0]);
       }
     );
+  },
+  unapprovedUserList: callBack =>{
+    pool.query(
+      `select name,email,user_type from users where is_approved=0`,
+      [],
+      (error, results, fields) => {
+        if (error) {
+          callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
   }
 };
